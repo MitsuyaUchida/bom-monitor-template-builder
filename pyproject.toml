@@ -1,0 +1,34 @@
+[build-system]
+requires = ["setuptools>=70", "wheel"]
+build-backend = "setuptools.build_meta"
+
+[project]
+name = "bom-monitor-template-builder"
+version = "0.1.0"
+description = "Discover Windows services and event logs used by installed software and generate BOM monitoring templates."
+requires-python = ">=3.12"
+dependencies = [
+  "click>=8.1",
+  "pydantic>=2.7",
+  "PyYAML>=6.0",
+  "pandas>=2.2",
+  "openpyxl>=3.1"
+]
+
+[project.scripts]
+bom-monitor-builder = "bom_monitor_builder.cli:main"
+
+[tool.setuptools.packages.find]
+where = ["src"]
+
+[tool.pytest.ini_options]
+testpaths = ["tests"]
+pythonpath = ["src"]
+
+[tool.ruff]
+line-length = 100
+target-version = "py312"
+
+[tool.mypy]
+python_version = "3.12"
+strict = true

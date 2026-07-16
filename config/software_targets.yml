@@ -1,0 +1,9 @@
+software_targets:
+  - name: BOM for Windows
+    vendor_keywords:
+      - SAY Technologies
+      - BOM
+    service_keywords:
+      - BOM
+    event_provider_keywords:
+      - BOM

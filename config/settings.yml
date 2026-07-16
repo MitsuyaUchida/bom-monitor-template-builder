@@ -1,0 +1,24 @@
+project:
+  name: bom-monitor-template-builder
+  version: 0.1.0
+
+logging:
+  level: INFO
+  file: logs/bom-monitor-builder.log
+
+collection:
+  source: sample
+  include_disabled_services: true
+  include_system_event_logs: false
+
+analysis:
+  minimum_relevance_score: 50
+
+output:
+  discovery_dir: output/discovery
+  report_dir: output/reports
+  template_dir: output/templates
+
+knowledge:
+  source_dir: import/TemplateData
+  output_dir: knowledge
