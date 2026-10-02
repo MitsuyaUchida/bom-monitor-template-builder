@@ -1,0 +1,273 @@
+profile:
+  id: arcserve_udp9
+  name: Arcserve UDP 9.0
+  version: 1
+
+detection:
+  filename_patterns:
+    - Arcserve
+    - UDP 9
+    - UDP_9
+  group_name_patterns:
+    - Arcserve UDP 9 & 10 監視
+  monitor_name_patterns:
+    - Arcserve UDP
+    - CASAD2DWebSvc
+    - ArcserveUDPPS
+  monitor_type_patterns:
+    - Service
+    - EventlogWSA
+  priority: 100
+
+template:
+  path: templates/ArcserveUDP9設計書.xlsx
+
+source:
+  header_search_rows: 10
+  sheets:
+    groups:
+      candidates: ["監視グループ一覧", "グループ一覧"]
+    monitors:
+      candidates: ["監視項目一覧", "監視一覧"]
+    details:
+      candidates: ["監視項目詳細", "監視詳細"]
+      required: false
+  fields:
+    group_id:
+      sections: ["groups"]
+      aliases: ["グループフォルダー", "グループID", "GroupId"]
+    group_name:
+      sections: ["groups", "monitors"]
+      aliases: ["グループ名", "グループ"]
+    enabled:
+      sections: ["groups", "monitors"]
+      aliases: ["有効", "有・無効", "Enabled"]
+    comment:
+      sections: ["groups", "monitors"]
+      aliases: ["コメント", "備考", "Comment"]
+    monitor_id:
+      sections: ["monitors"]
+      aliases: ["監視ファイル", "監視ID", "MonitorID"]
+    monitor_name:
+      sections: ["monitors"]
+      aliases: ["監視名", "名称", "MonitorName"]
+    monitor_type:
+      sections: ["monitors"]
+      aliases: ["監視タイプ", "タイプ", "Type"]
+    interval:
+      sections: ["monitors"]
+      aliases: ["監視間隔", "間隔", "Interval"]
+    warning_condition:
+      sections: ["monitors"]
+      aliases: ["注意判定", "注意しきい値", "Warning"]
+    critical_condition:
+      sections: ["monitors"]
+      aliases: ["危険判定", "危険しきい値", "Critical"]
+  keys:
+    monitor: ["group_id", "monitor_id"]
+
+transform:
+  replacements:
+    group_name:
+      Arcserve UDP 9 & 10 監視: 0235_arcserve UDP 9 & 10  監視
+    warning_condition:
+      4 等しくない: 開始と等しくない
+      0 以下: 0件以下
+      1 以上: 1件以上
+    critical_condition:
+      5 ContYellow: 連続した5回目の注意から
+      0 以下: 0件以下
+      1 以上: 1件以上
+  defaults:
+    average_count: "-"
+    remarks: null
+    action_id: null
+    action_enabled: null
+    action_name: null
+    action_comment: null
+    target_status: null
+    frequency: null
+    action_remarks: null
+  derived_fields:
+    remarks: "サービス名：{{ ObjectName }}"
+  row_rules:
+    - when:
+        monitor_id: ["MON02", "MON03", "MON04", "MON05", "MON06", "MON07", "MON08", "MON09", "MON10", "MON11"]
+      set:
+        group_id: null
+        group_name: null
+    - when:
+        monitor_type: EventlogWSA
+        monitor_id: MON10
+      set:
+        remarks: |-
+          イベントレベル：情報
+          イベントログ: アプリケーション
+          ソース/チャネル: Arcserve UDP
+          イベント説明のテキスト検索:
+          "バックアップを開始しました。"
+
+          拡張処理:
+          検出したイベントログをファイルへエクスポート
+          $(DetectedDataDir)\$(MonitorID).txt
+          出力文字コード
+          UNICODE
+          イベントログの監視範囲
+          監視サービス停止中に記録されたイベントログをサービス再開後に監視する
+        action_id: ACT01
+        action_enabled: 有効
+        action_name: メール送信
+        action_comment: null
+        target_status: |
+          監視するステータス:注意、危険、失敗
+        frequency: 毎回
+        action_remarks: |-
+          添付/埋込ファイル
+          添付ファイル：
+          $(DetectedDataDir)\$(MonitorID).txt
+
+          メールサーバーとあて先メールアドレスは必ず設定する
+    - when:
+        monitor_type: EventlogWSA
+        monitor_id: MON11
+      set:
+        remarks: |-
+          イベントレベル：重大、エラー、警告
+          イベントログ: アプリケーション
+          ソース/チャネル: Arcserve UDP,CA_LIC
+
+          拡張処理:
+          検出したイベントログをファイルへエクスポート
+          $(DetectedDataDir)\$(MonitorID).txt
+          出力文字コード
+          UNICODE
+          イベントログの監視範囲
+          監視サービス停止中に記録されたイベントログをサービス再開後に監視する
+        action_id: ACT01
+        action_enabled: 有効
+        action_name: メール送信
+        action_comment: null
+        target_status: |
+          監視するステータス:注意、危険、失敗
+        frequency: 毎回
+        action_remarks: |-
+          添付/埋込ファイル
+          添付ファイル：
+          $(DetectedDataDir)\$(MonitorID).txt
+
+          メールサーバーとあて先メールアドレスは必ず設定する
+  normalizers:
+    monitor_id: ["strip_extension", "trim"]
+    enabled: ["normalize_boolean"]
+    interval: ["normalize_interval"]
+    warning_condition: ["normalize_spaces", "normalize_threshold"]
+    critical_condition: ["normalize_spaces", "normalize_threshold"]
+    Options: ["mask_secret"]
+  plugins: []
+
+output:
+  default_filename: ArcserveUDP9設計書.xlsx
+  sheets: {}
+  monitor_table:
+    table: monitor_settings
+    clear_existing_data: true
+    trim_unused_rows: true
+    managed_columns:
+      group_id: B
+      group_name: C
+      monitor_id: D
+      monitor_name: E
+      interval: F
+      enabled: G
+      average_count: H
+      warning_condition: I
+      critical_condition: J
+      comment: K
+      remarks: L
+      action_id: M
+      action_enabled: N
+      action_name: O
+      action_comment: P
+      target_status: Q
+      frequency: R
+      action_remarks: S
+    layout:
+      group_merge:
+        enabled: false
+        columns: [B, C]
+      style_sources:
+        group_first: 4
+        group_middle: 5
+        group_last: 14
+        single_row_group: 14
+        table_last: 14
+    group_labels:
+      first_row_only: true
+    format:
+      alignment:
+        B: {horizontal: center, vertical: top, wrap_text: true}
+        D: {horizontal: center, vertical: top}
+        M: {horizontal: center, vertical: top}
+        N: {horizontal: center, vertical: top}
+        Q: {horizontal: center, vertical: top}
+        R: {horizontal: center, vertical: top}
+  tables:
+    monitor_settings:
+      sheet: "監視設定"
+      start_row: 4
+      template_row: 4
+      clear_existing_rows: false
+      reuse_existing_rows: true
+      columns:
+        B: group_id
+        C: group_name
+        D: monitor_id
+        E: monitor_name
+        F: interval
+        G: enabled
+        H: average_count
+        I: warning_condition
+        J: critical_condition
+        K: comment
+        L: remarks
+        M: action_id
+        N: action_enabled
+        O: action_name
+        P: action_comment
+        Q: target_status
+        R: frequency
+        S: action_remarks
+  cells:
+    document_title:
+      sheet: "監視設定"
+      cell: "A1"
+      value: "0235_arcserve UDP 9 & 10  監視"
+  preserve:
+    workbook_structure: true
+
+validation:
+  required_fields: ["group_id", "group_name", "monitor_id", "monitor_name", "interval"]
+  unique_fields: ["monitor_id"]
+  expected_sheets:
+    - "環境"
+    - "監視設定"
+    - "チェックシート"
+    - "AutoTemplate.ymlチェック"
+    - "サービス追加方法"
+
+security:
+  secret_patterns:
+    - user
+    - username
+    - password
+    - pass
+    - pswd
+    - secret
+    - token
+    - access-key
+    - secret-key
+    - client-secret
+  sanitize_template_strings: false
+  allow_plaintext_cells:
+    - 環境!B6
+  output_policy: mask

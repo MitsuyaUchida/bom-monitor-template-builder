@@ -1,0 +1,4 @@
+Product: BOM for Windows
+Type: Monitor_Export
+MajorVersion: 8
+MinorVersion: 0

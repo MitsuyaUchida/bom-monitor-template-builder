@@ -1,0 +1,4 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<MonitorItem xmlns:SOAP-ENV="http://schemas.xmlsoap.org/soap/envelope/" xmlns:SOAP-ENC="http://schemas.xmlsoap.org/soap/encoding/" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:xsd="http://www.w3.org/2001/XMLSchema" xmlns:ns1="urn:mx-helper"><Type>DiskQueueLength</Type><ParentId></ParentId><Id></Id><Name>ディスク処理待ち行列長監視</Name><StartTime>0</StartTime><Interval>60</Interval><IntervalUnit>Minutes</IntervalUnit><CLSID>{85A99104-EA14-11DA-BA76-0003FF52B219}</CLSID><ObjectName>_Total</ObjectName><ValueName>Avg. Disk Queue Length</ValueName><Options></Options><CmpMethodR>ContYellow</CmpMethodR><CmpValueR>2</CmpValueR><CmpMethodY>GreaterEqual</CmpMethodY><CmpValueY>2</CmpValueY><Comments>本監視項目は物理ディスクの負荷を監視するものです。&#xD;
+物理ディスク1インスタンスについて取得値が2以上だと負荷が高いと判断します。&#xD;
+しきい値については、物理ディスクのインスタンス数に応じて変更ください。</Comments><IconIndex>10</IconIndex><Enabled>true</Enabled><DisplayUnit></DisplayUnit><Scale>1</Scale></MonitorItem>

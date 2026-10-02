@@ -1,0 +1,245 @@
+<?xml version="1.0" encoding="Shift_JIS"?>
+<html xml:lang="ja" lang="ja" xmlns="http://www.w3.org/1999/xhtml">
+	<head>
+		<meta http-equiv="X-UA-Compatible" content="IE=EmulateIE8" />
+		<meta http-equiv="Content-Type" content="text/html; charset=Shift_JIS"/>
+		<meta http-equiv="Content-Style-Type" content="text/css"/>
+		<title>ディスクパフォーマンス監視</title>
+		<style type="text/css">
+/* BASE */
+	* {margin: 0;padding: 0;}
+	body {background-color:#FFF;line-height:1.5;vertical-align:bottom;text-align:center;font-size:9pt;font-family:"ＭＳ Ｐゴシック",sans-serif;}
+
+/* For PACKAGE_HEADER_HTML_PROC */
+	div.package_header {width:600px;margin-top:2px;margin-bottom:2px;text-align:left;background-color:#FFF;}
+	div.header_icon {padding-top:1.5em;width:100px;float:left;}
+	div.header_desc {width:490px;float:right;padding:1.5em 0;}
+	div.header_template {font-size:150%;font-weight:bold;}
+	div.header_package_caution {clear:both;font-size:90%;color:navy;}
+
+/* PACKAGE_FOOTER_HTML_PROC */
+	div.package_footer {clear:both;width:600px;margin-top:10px;margin-bottom:2px;text-align:right;padding-top:1.5em;}
+
+/* For MONITOR_LIST_HTML_PROC */
+	div.monitor_list {width:600px;margin-top:2px;margin-bottom:2px;text-align:left;padding-left:18px;background-color:#EEE;}
+
+/* For GROUP_HEADER_HTML_PROC */
+	div.group_header {clear:both;width:580px;margin-top:6px;}
+
+/* For GROUP_DATA_HTML_PROC */
+	div.group_data {clear:both;width:580px;background-color:#EFE;margin-top:2px;margin-bottom:2px;}
+	div.group_icon {width:55px;float:left;}
+	div.group_icon img {margin-left:10px;vertical-align:middle;}
+	div.group_desc {width:520px;float:right;background-color:#EFE;}
+	div.group_desc div {padding-right:1em;display:inline;}
+	div.group_name {font-size:110%;font-weight:bold;}
+	div.group_package_caution {font-size:90%;color:navy;}
+
+/* For MONITOR_HEADER_HTML_PROC */
+	div.monitor_item {clear:both;width:580px;margin-top:4px;margin-bottom:2px;background-color:#DFF;}
+	div.monitor_icon {width:55px;float:left;}
+	div.monitor_icon img {margin-left:25px;vertical-align:middle;}
+	div.monitor_desc {width:520px;float:right;background-color:#DFF;clear:both;}
+
+	div.monitor_title {width:500px;}
+	div.monitor_note {width:500px;}
+	div.monitor_settings {width:500px;}
+	div.monitor_threshold {width:500px;}
+
+	div.monitor_name {font-weight:bold;}
+	div.monitor_caption {font-size:85%;color:navy;}
+	div.monitor_title div {padding-right:0.75em;display:inline;}
+	div.monitor_note div {padding-left:0.75em;display:inline;}
+	div.monitor_settings {padding-left:0.75em;}
+	div.monitor_settings div {display:inline;}
+	div.monitor_object {padding-right:0.75em;}
+	div.monitor_counter {padding-right:0.75em;}
+	div.monitor_instance {padding-right:0.75em;}
+	div.monitor_eventcategory {padding-right:0.75em;}
+	div.monitor_threshold div {padding-left:0.75em;display:inline;}
+
+</style>
+	</head>
+	<body>
+		<div class="template_data">
+			<div class="package_header">
+				<div class="header_icon">
+					<img src="data:image/png;base64,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" width="100" height="46" alt="BOM for Windows Ver.8.0"/>
+				</div>
+				<div class="header_desc">
+					<div class="header_template">ディスクパフォーマンス監視</div>
+					<div class="header_mon_total">監視項目総数：4 個</div>
+					<div class="header_package_caution"></div>
+				</div>
+			</div>
+			<div class="monitor_list">
+				<div class="group_header">
+					<div class="group_data">
+						<div class="group_icon">
+							<img src="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAACAAAAAgBAMAAACBVGfHAAAAMFBMVEUAAACAAAAAgACAgAAAAICAAIAAgIDAwMCAgID/AAAA/wD//wAAAP//AP8A//////9PEyZJAAAAEHRSTlP/////////////////AP//c7mGeQAAAK9JREFUeNqdkSESwyAQAPlAXpM4cCAQ/U/7BEwmj6Hu6hIRwQMw+UNFZGfSu4MMUFGRRQA7CwjE9oO4JKJDajEdyFhE3A1ii5gMcyYi3hMPusmNKI6aN4rdVNjun9D90AgtwTdCAsDAYjE0ZtzDcy0FBeCp+NyIHph0BJllEutZaKiKGfolB54L3OQb4MWCVrlQNgsV0qshH/EhsFFJBK8CG5ySqCDhGjqxiYYrf/sFgqtGEQDHhHoAAAAASUVORK5CYII=" width="24" height="24" alt="grp icon"/>
+						</div>
+						<div class="group_desc">
+							<div class="group_name">ディスクパフォーマンス監視</div>
+							<div class="group_enabled">有効/無効：有効</div>
+							<div class="group_mon_total">監視項目数：4 個</div>
+							<div class="group_package_caution"></div>
+						</div>
+					</div>
+					<div class="monitor_data">
+						<div class="monitor_item">
+							<div class="monitor_icon">
+								<img width="24" height="24" alt="mon icon" src="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAACAAAAAgBAMAAACBVGfHAAAAMFBMVEUAAACAAAAAgACAgAAAAICAAIAAgIDAwMCAgID/AAAA/wD//wAAAP//AP8A//////9PEyZJAAAADnRSTlP/////////////////AEXA3MgAAAABYktHRA8YugDZAAAACXBIWXMAAAsSAAALEgHS3X78AAAAiElEQVR42sXRPQ6FIAwHcC7QxDc6GI9ZRjbYcPVWunXpOXzjA/ygJTo4vS6kvzSB/jHclLmFAATMFOAA+gK5dNgTooXcJH8EdF6BR4sKCBEdC8gjoIA2x3+D9TNoGHHS0M9dM/EGYtm2Am0ljwpxT0xCyVTAnnoF30Lq8s+JlwZY0rWLubaV9QOP028EMJJV5wAAAABJRU5ErkJggg=="/>
+							</div>
+							<div class="monitor_desc">
+								<div class="monitor_title">
+									<div class="monitor_name">レイテンシ(ディスク転送時間)</div>
+									<br/>
+									<div class="monitor_caption"></div>
+								</div>
+								<div class="monitor_note">
+									<div class="monitor_enabled">有効/無効：有効</div>
+									<div class="monitor_interval">監視間隔：5 分</div>
+									<div class="monitor_type">監視タイプ：</div>
+								</div>
+								<div class="monitor_settings">
+									<div class="monitor_object"></div>
+									<div class="monitor_counter"></div>
+									<div class="monitor_set_detail"></div>
+									<div class="monitor_instance"></div>
+									<div class="monitor_eventcategory"></div>
+									<div class="monitor_eventid"></div>
+								</div>
+								<div class="monitor_threshold">
+									<div class="monitor_threshold_yellow">
+										<img src="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAACAAAAAgBAMAAACBVGfHAAAAMFBMVEUAAACAAAAAgACAgAAAAICAAIAAgIDAwMCAgID/AAAA/wD//wAAAP//AP8A//////9PEyZJAAAADnRSTlP/////////////////AEXA3MgAAAABYktHRA8YugDZAAAACW9GRnMAAAAgAAAAAADdhrP4AAAACXBIWXMAAAsSAAALEgHS3X78AAAApUlEQVR42qXRPQrDMAwFYEGXHCeg0ZfraAi+S8Gjhl6h0MWLT+LBlSUlUULapW/zx/MPMtRT4AtEjodIHNxB1kSQDApZJoOFnl1gTgKF100gTwIL9W57uKLQDB4DynqC7hFoB+A7aMucjpAV6NygfxrhsvF2gONhDrK8tAZ/xADcCwqvtRJQB1RuriAzvcumIAWdOmDm4PYNNQJyILqfA0789bcuH+RAaa0SWDbJAAAAAElFTkSuQmCC" width="10" height="10" alt="warning"/>
+										<div class="monitor_threshold_yellow_value">注意：20以上</div>
+									</div>
+									<div class="monitor_threshold_red">
+										<img src="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAACAAAAAgBAMAAACBVGfHAAAAMFBMVEUAAACAAAAAgACAgAAAAICAAIAAgIDAwMCAgID/AAAA/wD//wAAAP//AP8A//////9PEyZJAAAADnRSTlP/////////////////AEXA3MgAAAABYktHRA8YugDZAAAACXBIWXMAAAsSAAALEgHS3X78AAAAnklEQVR42qXRoRLDIAwG4MxVNpK3naSCuyGj9kqbi+FBUCwNgaW9bWa/4+sP9AiUU+ALRImHSBJ8g66JIBkwWRaDje5N4ZYUWNZVIS8KG7Vme9ZkUD3wOKHvUagHkDtoZk1HyB3o3KB/GuFj4+kA9x9zkBVK8EfsgLOQOzxGJWB/IL64gr7pFft3HI/MgFmCcwwlAkogusmBJP6arcsLCoxGG04hVYoAAAAASUVORK5CYII=" width="10" height="10" alt="danger"/>
+										<div class="monitor_threshold_red_value">危険：30以上</div>
+									</div>
+								</div>
+							</div>
+						</div>
+					</div>
+					<div class="monitor_data">
+						<div class="monitor_item">
+							<div class="monitor_icon">
+								<img width="24" height="24" alt="mon icon" src="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAACAAAAAgBAMAAACBVGfHAAAAMFBMVEUAAACAAAAAgACAgAAAAICAAIAAgIDAwMCAgID/AAAA/wD//wAAAP//AP8A//////9PEyZJAAAADnRSTlP/////////////////AEXA3MgAAAABYktHRA8YugDZAAAACXBIWXMAAAsSAAALEgHS3X78AAAAiElEQVR42sXRPQ6FIAwHcC7QxDc6GI9ZRjbYcPVWunXpOXzjA/ygJTo4vS6kvzSB/jHclLmFAATMFOAA+gK5dNgTooXcJH8EdF6BR4sKCBEdC8gjoIA2x3+D9TNoGHHS0M9dM/EGYtm2Am0ljwpxT0xCyVTAnnoF30Lq8s+JlwZY0rWLubaV9QOP028EMJJV5wAAAABJRU5ErkJggg=="/>
+							</div>
+							<div class="monitor_desc">
+								<div class="monitor_title">
+									<div class="monitor_name">スループット(ディスクの読み取り/書き込み速度)</div>
+									<br/>
+									<div class="monitor_caption"></div>
+								</div>
+								<div class="monitor_note">
+									<div class="monitor_enabled">有効/無効：有効</div>
+									<div class="monitor_interval">監視間隔：5 分</div>
+									<div class="monitor_type">監視タイプ：</div>
+								</div>
+								<div class="monitor_settings">
+									<div class="monitor_object"></div>
+									<div class="monitor_counter"></div>
+									<div class="monitor_set_detail"></div>
+									<div class="monitor_instance"></div>
+									<div class="monitor_eventcategory"></div>
+									<div class="monitor_eventid"></div>
+								</div>
+								<div class="monitor_threshold">
+									<div class="monitor_threshold_yellow">
+										<img src="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAACAAAAAgBAMAAACBVGfHAAAAMFBMVEUAAACAAAAAgACAgAAAAICAAIAAgIDAwMCAgID/AAAA/wD//wAAAP//AP8A//////9PEyZJAAAADnRSTlP/////////////////AEXA3MgAAAABYktHRA8YugDZAAAACW9GRnMAAAAgAAAAAADdhrP4AAAACXBIWXMAAAsSAAALEgHS3X78AAAApUlEQVR42qXRPQrDMAwFYEGXHCeg0ZfraAi+S8Gjhl6h0MWLT+LBlSUlUULapW/zx/MPMtRT4AtEjodIHNxB1kSQDApZJoOFnl1gTgKF100gTwIL9W57uKLQDB4DynqC7hFoB+A7aMucjpAV6NygfxrhsvF2gONhDrK8tAZ/xADcCwqvtRJQB1RuriAzvcumIAWdOmDm4PYNNQJyILqfA0789bcuH+RAaa0SWDbJAAAAAElFTkSuQmCC" width="10" height="10" alt="warning"/>
+										<div class="monitor_threshold_yellow_value">注意：0以上</div>
+									</div>
+									<div class="monitor_threshold_red">
+										<img src="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAACAAAAAgBAMAAACBVGfHAAAAMFBMVEUAAACAAAAAgACAgAAAAICAAIAAgIDAwMCAgID/AAAA/wD//wAAAP//AP8A//////9PEyZJAAAADnRSTlP/////////////////AEXA3MgAAAABYktHRA8YugDZAAAACXBIWXMAAAsSAAALEgHS3X78AAAAnklEQVR42qXRoRLDIAwG4MxVNpK3naSCuyGj9kqbi+FBUCwNgaW9bWa/4+sP9AiUU+ALRImHSBJ8g66JIBkwWRaDje5N4ZYUWNZVIS8KG7Vme9ZkUD3wOKHvUagHkDtoZk1HyB3o3KB/GuFj4+kA9x9zkBVK8EfsgLOQOzxGJWB/IL64gr7pFft3HI/MgFmCcwwlAkogusmBJP6arcsLCoxGG04hVYoAAAAASUVORK5CYII=" width="10" height="10" alt="danger"/>
+										<div class="monitor_threshold_red_value">危険：0以上</div>
+									</div>
+								</div>
+							</div>
+						</div>
+					</div>
+					<div class="monitor_data">
+						<div class="monitor_item">
+							<div class="monitor_icon">
+								<img width="24" height="24" alt="mon icon" src="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAACAAAAAgBAMAAACBVGfHAAAAMFBMVEUAAACAAAAAgACAgAAAAICAAIAAgIDAwMCAgID/AAAA/wD//wAAAP//AP8A//////9PEyZJAAAADnRSTlP/////////////////AEXA3MgAAAABYktHRA8YugDZAAAACXBIWXMAAAsSAAALEgHS3X78AAAAiElEQVR42sXRPQ6FIAwHcC7QxDc6GI9ZRjbYcPVWunXpOXzjA/ygJTo4vS6kvzSB/jHclLmFAATMFOAA+gK5dNgTooXcJH8EdF6BR4sKCBEdC8gjoIA2x3+D9TNoGHHS0M9dM/EGYtm2Am0ljwpxT0xCyVTAnnoF30Lq8s+JlwZY0rWLubaV9QOP028EMJJV5wAAAABJRU5ErkJggg=="/>
+							</div>
+							<div class="monitor_desc">
+								<div class="monitor_title">
+									<div class="monitor_name">IOPS</div>
+									<br/>
+									<div class="monitor_caption"></div>
+								</div>
+								<div class="monitor_note">
+									<div class="monitor_enabled">有効/無効：有効</div>
+									<div class="monitor_interval">監視間隔：5 分</div>
+									<div class="monitor_type">監視タイプ：</div>
+								</div>
+								<div class="monitor_settings">
+									<div class="monitor_object"></div>
+									<div class="monitor_counter"></div>
+									<div class="monitor_set_detail"></div>
+									<div class="monitor_instance"></div>
+									<div class="monitor_eventcategory"></div>
+									<div class="monitor_eventid"></div>
+								</div>
+								<div class="monitor_threshold">
+									<div class="monitor_threshold_yellow">
+										<img src="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAACAAAAAgBAMAAACBVGfHAAAAMFBMVEUAAACAAAAAgACAgAAAAICAAIAAgIDAwMCAgID/AAAA/wD//wAAAP//AP8A//////9PEyZJAAAADnRSTlP/////////////////AEXA3MgAAAABYktHRA8YugDZAAAACW9GRnMAAAAgAAAAAADdhrP4AAAACXBIWXMAAAsSAAALEgHS3X78AAAApUlEQVR42qXRPQrDMAwFYEGXHCeg0ZfraAi+S8Gjhl6h0MWLT+LBlSUlUULapW/zx/MPMtRT4AtEjodIHNxB1kSQDApZJoOFnl1gTgKF100gTwIL9W57uKLQDB4DynqC7hFoB+A7aMucjpAV6NygfxrhsvF2gONhDrK8tAZ/xADcCwqvtRJQB1RuriAzvcumIAWdOmDm4PYNNQJyILqfA0789bcuH+RAaa0SWDbJAAAAAElFTkSuQmCC" width="10" height="10" alt="warning"/>
+										<div class="monitor_threshold_yellow_value">注意：0以上</div>
+									</div>
+									<div class="monitor_threshold_red">
+										<img src="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAACAAAAAgBAMAAACBVGfHAAAAMFBMVEUAAACAAAAAgACAgAAAAICAAIAAgIDAwMCAgID/AAAA/wD//wAAAP//AP8A//////9PEyZJAAAADnRSTlP/////////////////AEXA3MgAAAABYktHRA8YugDZAAAACXBIWXMAAAsSAAALEgHS3X78AAAAnklEQVR42qXRoRLDIAwG4MxVNpK3naSCuyGj9kqbi+FBUCwNgaW9bWa/4+sP9AiUU+ALRImHSBJ8g66JIBkwWRaDje5N4ZYUWNZVIS8KG7Vme9ZkUD3wOKHvUagHkDtoZk1HyB3o3KB/GuFj4+kA9x9zkBVK8EfsgLOQOzxGJWB/IL64gr7pFft3HI/MgFmCcwwlAkogusmBJP6arcsLCoxGG04hVYoAAAAASUVORK5CYII=" width="10" height="10" alt="danger"/>
+										<div class="monitor_threshold_red_value">危険：0以上</div>
+									</div>
+								</div>
+							</div>
+						</div>
+					</div>
+					<div class="monitor_data">
+						<div class="monitor_item">
+							<div class="monitor_icon">
+								<img width="24" height="24" alt="mon icon" src="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAACAAAAAgBAMAAACBVGfHAAAAMFBMVEUAAACAAAAAgACAgAAAAICAAIAAgIDAwMCAgID/AAAA/wD//wAAAP//AP8A//////9PEyZJAAAADnRSTlP/////////////////AEXA3MgAAAABYktHRA8YugDZAAAACXBIWXMAAAsSAAALEgHS3X78AAAAiElEQVR42sXRPQ6FIAwHcC7QxDc6GI9ZRjbYcPVWunXpOXzjA/ygJTo4vS6kvzSB/jHclLmFAATMFOAA+gK5dNgTooXcJH8EdF6BR4sKCBEdC8gjoIA2x3+D9TNoGHHS0M9dM/EGYtm2Am0ljwpxT0xCyVTAnnoF30Lq8s+JlwZY0rWLubaV9QOP028EMJJV5wAAAABJRU5ErkJggg=="/>
+							</div>
+							<div class="monitor_desc">
+								<div class="monitor_title">
+									<div class="monitor_name">ディスク（論理ドライブC: ）のアクティブな時間</div>
+									<br/>
+									<div class="monitor_caption"></div>
+								</div>
+								<div class="monitor_note">
+									<div class="monitor_enabled">有効/無効：有効</div>
+									<div class="monitor_interval">監視間隔：5 分</div>
+									<div class="monitor_type">監視タイプ：</div>
+								</div>
+								<div class="monitor_settings">
+									<div class="monitor_object"></div>
+									<div class="monitor_counter"></div>
+									<div class="monitor_set_detail"></div>
+									<div class="monitor_instance"></div>
+									<div class="monitor_eventcategory"></div>
+									<div class="monitor_eventid"></div>
+								</div>
+								<div class="monitor_threshold">
+									<div class="monitor_threshold_yellow">
+										<img src="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAACAAAAAgBAMAAACBVGfHAAAAMFBMVEUAAACAAAAAgACAgAAAAICAAIAAgIDAwMCAgID/AAAA/wD//wAAAP//AP8A//////9PEyZJAAAADnRSTlP/////////////////AEXA3MgAAAABYktHRA8YugDZAAAACW9GRnMAAAAgAAAAAADdhrP4AAAACXBIWXMAAAsSAAALEgHS3X78AAAApUlEQVR42qXRPQrDMAwFYEGXHCeg0ZfraAi+S8Gjhl6h0MWLT+LBlSUlUULapW/zx/MPMtRT4AtEjodIHNxB1kSQDApZJoOFnl1gTgKF100gTwIL9W57uKLQDB4DynqC7hFoB+A7aMucjpAV6NygfxrhsvF2gONhDrK8tAZ/xADcCwqvtRJQB1RuriAzvcumIAWdOmDm4PYNNQJyILqfA0789bcuH+RAaa0SWDbJAAAAAElFTkSuQmCC" width="10" height="10" alt="warning"/>
+										<div class="monitor_threshold_yellow_value">注意：0以上</div>
+									</div>
+									<div class="monitor_threshold_red">
+										<img src="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAACAAAAAgBAMAAACBVGfHAAAAMFBMVEUAAACAAAAAgACAgAAAAICAAIAAgIDAwMCAgID/AAAA/wD//wAAAP//AP8A//////9PEyZJAAAADnRSTlP/////////////////AEXA3MgAAAABYktHRA8YugDZAAAACXBIWXMAAAsSAAALEgHS3X78AAAAnklEQVR42qXRoRLDIAwG4MxVNpK3naSCuyGj9kqbi+FBUCwNgaW9bWa/4+sP9AiUU+ALRImHSBJ8g66JIBkwWRaDje5N4ZYUWNZVIS8KG7Vme9ZkUD3wOKHvUagHkDtoZk1HyB3o3KB/GuFj4+kA9x9zkBVK8EfsgLOQOzxGJWB/IL64gr7pFft3HI/MgFmCcwwlAkogusmBJP6arcsLCoxGG04hVYoAAAAASUVORK5CYII=" width="10" height="10" alt="danger"/>
+										<div class="monitor_threshold_red_value">危険：0以上</div>
+									</div>
+								</div>
+							</div>
+						</div>
+					</div>
+					</div>
+				</div>
+			</div>
+
+			<div class="package_footer">
+				<span class="footer_copyright">Copyright (C) 2026 SAY Technologies, Inc. All rights reserved.</span>
+			</div>
+		</div>
+	</body>
+</html>

@@ -1,0 +1,23 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<MonitorItem xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
+  <Type>Custom2</Type>
+  <ParentId></ParentId>
+  <Id></Id>
+  <Name>レイテンシ(ディスクキュー長)</Name>
+  <StartTime>00:00</StartTime>
+  <Interval>5</Interval>
+  <IntervalUnit>Minutes</IntervalUnit>
+  <CLSID>{00000000-0000-0000-0000-000000000004}</CLSID>
+  <ObjectName>powershell.exe</ObjectName>
+  <ValueName>CurrentDiskQueueLength</ValueName>
+  <Options>-RetryInterval:60000 -t:60000 "-x:-ExecutionPolicy Bypass -F &quot;$(InstallDir)\bin\support\disklatency.ps1&quot;"</Options>
+  <CmpMethodR>GreaterEqual</CmpMethodR>
+  <CmpValueR>30</CmpValueR>
+  <CmpMethodY>GreaterEqual</CmpMethodY>
+  <CmpValueY>20</CmpValueY>
+  <Comments>MON04 comment</Comments>
+  <IconIndex>0</IconIndex>
+  <Enabled>true</Enabled>
+  <DisplayUnit>ms</DisplayUnit>
+  <Scale>1.0</Scale>
+</MonitorItem>

@@ -1,0 +1,3 @@
+# Keep Linux shell scripts runnable after checkout on Windows and Linux.
+*.sh text eol=lf
+.gitignore text eol=lf

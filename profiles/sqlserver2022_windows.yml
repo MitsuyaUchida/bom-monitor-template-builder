@@ -1,0 +1,349 @@
+profile:
+  id: sqlserver2022_windows
+  name: SQL Server 2022 Windows
+  version: 1
+
+detection:
+  filename_patterns:
+    - SQL Server 2022
+    - sqlserver2022
+    - sql_server_2022
+  group_name_patterns:
+    - SQL Server 2022 サービス監視
+    - SQL Server 2022 イベントログ監視
+    - SQL Server 2022 パフォーマンス監視
+  monitor_name_patterns:
+    - MSSQLSERVER
+    - SQLSERVERAGENT
+    - SQLBrowser
+  monitor_type_patterns:
+    - Service
+    - EventlogWSA
+    - Perf
+  priority: 100
+
+template:
+  path: templates/sqlserver2022_windows_design.xlsx
+
+source:
+  header_search_rows: 10
+  sheets:
+    groups:
+      candidates: ["監視グループ一覧", "グループ一覧"]
+    monitors:
+      candidates: ["監視項目一覧", "監視一覧"]
+    details:
+      candidates: ["監視項目詳細", "監視詳細"]
+      required: false
+  fields:
+    group_id:
+      sections: ["groups"]
+      aliases: ["グループフォルダー", "グループID", "GroupId"]
+    group_name:
+      sections: ["groups", "monitors"]
+      aliases: ["グループ名", "グループ"]
+    enabled:
+      sections: ["groups", "monitors"]
+      aliases: ["有効", "有・無効", "Enabled"]
+    comment:
+      sections: ["groups", "monitors"]
+      aliases: ["コメント", "備考", "Comment"]
+    monitor_id:
+      sections: ["monitors"]
+      aliases: ["監視ファイル", "監視ID", "MonitorID"]
+    monitor_name:
+      sections: ["monitors"]
+      aliases: ["監視名", "名称", "MonitorName"]
+    monitor_type:
+      sections: ["monitors"]
+      aliases: ["監視タイプ", "タイプ", "Type"]
+    interval:
+      sections: ["monitors"]
+      aliases: ["監視間隔", "間隔", "Interval"]
+    warning_condition:
+      sections: ["monitors"]
+      aliases: ["注意判定", "注意しきい値", "Warning"]
+    critical_condition:
+      sections: ["monitors"]
+      aliases: ["危険判定", "危険しきい値", "Critical"]
+  keys:
+    monitor: ["group_id", "monitor_id"]
+
+transform:
+  replacements:
+    warning_condition:
+      4 等しくない: 開始 と等しくない
+    critical_condition:
+      5 ContYellow: 連続した 5 回目の注意から
+  defaults:
+    average_count: "-"
+    remarks: null
+  derived_fields: {}
+  row_rules:
+    - when:
+        group_id: GRP02
+      set:
+        warning_condition: 1 件 以上
+        critical_condition: 1 件 以上
+    - when:
+        group_id: GRP02
+        monitor_id: MON13
+      set:
+        average_count: null
+    - when:
+        group_id: GRP03
+        monitor_id: MON01
+      set:
+        warning_condition: 524288 以下
+        critical_condition: 262144 以下
+    - when:
+        group_id: GRP03
+        monitor_id: MON02
+      set:
+        warning_condition: 20 /sec 以上
+        critical_condition: 30 /sec 以上
+    - when:
+        group_id: GRP03
+        monitor_id: MON03
+      set:
+        warning_condition: 80 % 以上
+        critical_condition: 90 % 以上
+    - when:
+        group_id: GRP03
+        monitor_id: MON04
+      set:
+        warning_condition: 4 以上
+        critical_condition: 6 以上
+    - when:
+        group_id: GRP03
+        monitor_id: MON05
+      set:
+        warning_condition: 80 % 以上
+        critical_condition: 90 % 以上
+    - when:
+        group_id: GRP03
+        monitor_id: MON06
+      set:
+        warning_condition: 15 % 以上
+        critical_condition: 25 % 以上
+    - when:
+        group_id: GRP03
+        monitor_id: MON07
+      set:
+        warning_condition: 70 % 以上
+        critical_condition: 80 % 以上
+    - when:
+        group_id: GRP03
+        monitor_id: MON08
+      set:
+        warning_condition: 10 以上
+        critical_condition: 15 以上
+    - when:
+        group_id: GRP03
+        monitor_id: MON09
+      set:
+        warning_condition: 4 /sec 以上
+        critical_condition: 8 /sec 以上
+    - when:
+        group_id: GRP03
+        monitor_id: MON10
+      set:
+        warning_condition: 30 /sec 以上
+        critical_condition: 40 /sec 以上
+    - when:
+        group_id: GRP03
+        monitor_id: MON11
+      set:
+        warning_condition: 2 /sec 以上
+        critical_condition: 4 /sec 以上
+    - when:
+        group_id: GRP03
+        monitor_id: MON12
+      set:
+        warning_condition: 90 % 以下
+        critical_condition: 80 % 以下
+    - when:
+        group_id: GRP03
+        monitor_id: MON13
+      set:
+        warning_condition: 200 /sec 以上
+        critical_condition: 300 /sec 以上
+    - when:
+        group_id: GRP03
+        monitor_id: MON14
+      set:
+        warning_condition: 200 /sec 以上
+        critical_condition: 300 /sec 以上
+    - when:
+        group_id: GRP03
+        monitor_id: MON15
+      set:
+        warning_condition: 20 /sec 以上
+        critical_condition: 40 /sec 以上
+    - when:
+        group_id: GRP03
+        monitor_id: MON16
+      set:
+        enabled: 無効
+        warning_condition: 1000 以上
+        critical_condition: 5000 以上
+    - when:
+        group_id: GRP03
+        monitor_id: MON17
+      set:
+        warning_condition: 3 /sec 以上
+        critical_condition: 6 /sec 以上
+    - when:
+        group_id: GRP03
+        monitor_id: MON18
+      set:
+        interval: 1分
+        enabled: 有効
+        warning_condition: 1 /sec 以上
+        critical_condition: 3 /sec 以上
+    - when:
+        group_id: GRP03
+        monitor_id: MON19
+      set:
+        warning_condition: 1048579 以上
+        critical_condition: 1572864 以上
+    - when:
+        group_id: GRP03
+        monitor_id: MON20
+      set:
+        interval: 5分
+        warning_condition: 5 /sec 以上
+        critical_condition: 10 /sec 以上
+    - when:
+        group_id: GRP01
+        monitor_id: ["MON02", "MON03", "MON04", "MON05"]
+      set:
+        group_id: null
+        group_name: null
+    - when:
+        group_id: GRP02
+        monitor_id: ["MON02", "MON03", "MON04", "MON05", "MON06", "MON07", "MON08", "MON09", "MON10", "MON11", "MON12", "MON13", "MON14"]
+      set:
+        group_id: null
+        group_name: null
+    - when:
+        group_id: GRP03
+        monitor_id: ["MON02", "MON03", "MON04", "MON05", "MON06", "MON07", "MON08", "MON09", "MON10", "MON11", "MON12", "MON13", "MON14", "MON15", "MON16", "MON17", "MON18", "MON19", "MON20"]
+      set:
+        group_id: null
+        group_name: null
+  normalizers:
+    monitor_id: ["strip_extension", "trim"]
+    enabled: ["normalize_boolean"]
+    interval: ["normalize_interval"]
+    Options: ["mask_secret"]
+  plugins: []
+
+output:
+  default_filename: sqlserver2022_windows_design.xlsx
+  sheets: {}
+  monitor_table:
+    table: monitor_settings
+    clear_existing_data: true
+    trim_unused_rows: true
+    template_data_end_row: 43
+    unused_rows:
+      mode: delete_rows
+    managed_columns:
+      group_id: B
+      group_name: C
+      monitor_id: D
+      monitor_name: E
+      interval: F
+      enabled: G
+      average_count: H
+      warning_condition: I
+      critical_condition: J
+      remarks: K
+    layout:
+      group_merge:
+        enabled: false
+        columns: [B, C]
+      style_sources:
+        group_first: 5
+        group_middle: 6
+        group_last: 9
+        single_row_group: 43
+        table_last: 43
+    group_labels:
+      first_row_only: true
+    format:
+      alignment:
+        B: {horizontal: center, vertical: top, wrap_text: true}
+        C: {horizontal: center, vertical: top}
+        D: {horizontal: center, vertical: top}
+        E: {horizontal: center, vertical: top}
+        F: {horizontal: center, vertical: top}
+        G: {horizontal: center, vertical: top}
+        H: {horizontal: center, vertical: top}
+        I: {horizontal: center, vertical: top}
+        J: {horizontal: center, vertical: top}
+        K: {vertical: top, wrap_text: true}
+  tables:
+    monitor_settings:
+      sheet: "監視設定"
+      start_row: 5
+      template_row: 5
+      clear_existing_rows: false
+      reuse_existing_rows: true
+      columns:
+        B: group_id
+        C: group_name
+        D: monitor_id
+        E: monitor_name
+        F: interval
+        G: enabled
+        H: average_count
+        I: warning_condition
+        J: critical_condition
+        K: remarks
+  cells:
+    category_title:
+      sheet: "監視設定"
+      cell: "A1"
+      value: "0005_データベース サーバー"
+      when:
+        source_stem: "0307_sqlserver2022_windows"
+      clear_if_unresolved: true
+    document_title:
+      sheet: "監視設定"
+      cell: "A2"
+      value: "0307_SQL Server 2022 (Windows版) "
+      when:
+        source_stem: "0307_sqlserver2022_windows"
+      clear_if_unresolved: true
+  preserve:
+    workbook_structure: true
+
+validation:
+  required_fields: ["group_id", "group_name", "monitor_id", "monitor_name", "interval"]
+  unique_fields: []
+  expected_sheets:
+    - "環境"
+    - "監視設定"
+    - "チェックシート"
+    - "AutoTemplate.ymlチェック"
+    - "サービス追加方法"
+
+security:
+  secret_patterns:
+    - user
+    - username
+    - password
+    - pass
+    - pswd
+    - secret
+    - token
+    - access-key
+    - secret-key
+    - client-secret
+    - connection string
+  sanitize_template_strings: false
+  allow_plaintext_cells:
+    - 環境!A4
+  output_policy: mask

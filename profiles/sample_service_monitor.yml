@@ -1,0 +1,141 @@
+profile:
+  id: sample_service_monitor
+  name: Sample Service Monitor
+  version: 1
+
+template:
+  path: sample_service_template.xlsx
+
+source:
+  header_search_rows: 8
+  sheets:
+    groups:
+      candidates: ["ServiceGroups", "Group Catalog"]
+    monitors:
+      candidates: ["ServiceMonitors", "Monitor Catalog"]
+    details:
+      candidates: ["ServiceDetails", "Monitor Details"]
+      required: false
+  fields:
+    group_id:
+      sections: ["groups"]
+      aliases: ["Folder", "Group Folder", "Group ID"]
+    group_name:
+      sections: ["groups", "monitors"]
+      aliases: ["Team", "Group Name", "Group"]
+    enabled:
+      sections: ["groups", "monitors"]
+      aliases: ["Enabled", "Use Flag", "State"]
+    comment:
+      sections: ["groups", "monitors"]
+      aliases: ["Comment", "Note", "Memo"]
+    monitor_id:
+      sections: ["monitors"]
+      aliases: ["Monitor File", "Monitor ID"]
+    monitor_name:
+      sections: ["monitors"]
+      aliases: ["Service Label", "Monitor Name"]
+    monitor_type:
+      sections: ["monitors"]
+      aliases: ["Kind", "Monitor Type"]
+    interval:
+      sections: ["monitors"]
+      aliases: ["Cycle", "Interval"]
+    warning_condition:
+      sections: ["monitors"]
+      aliases: ["Warn Expr", "Warning"]
+    critical_condition:
+      sections: ["monitors"]
+      aliases: ["Crit Expr", "Critical"]
+
+transform:
+  replacements: {}
+  defaults:
+    owner: "ops-team"
+    notification: "none"
+  derived_fields: {}
+  normalizers:
+    monitor_id: ["strip_extension"]
+    enabled: ["normalize_boolean"]
+    interval: ["normalize_interval"]
+    warning_condition: ["normalize_spaces", "normalize_threshold"]
+    critical_condition: ["normalize_spaces", "normalize_threshold"]
+  plugins: []
+
+output:
+  sheets: {}
+  monitor_table:
+    table: settings
+    clear_existing_data: true
+    trim_unused_rows: true
+    managed_columns:
+      group_id: A
+      group_name: B
+      monitor_id: C
+      monitor_name: D
+      monitor_type: E
+      interval: F
+      enabled: G
+      warning_condition: H
+      critical_condition: I
+      owner: J
+      notification: K
+      comment: L
+    layout:
+      group_merge:
+        enabled: false
+        columns: [A, B]
+      style_sources:
+        group_first: 3
+        group_middle: 3
+        group_last: 3
+        single_row_group: 3
+        table_last: 3
+    format:
+      alignment:
+        A: {horizontal: left, vertical: center}
+        B: {horizontal: left, vertical: center}
+        C: {horizontal: left, vertical: center}
+        D: {horizontal: left, vertical: center}
+        E: {horizontal: left, vertical: center}
+        F: {horizontal: left, vertical: center}
+        G: {horizontal: left, vertical: center}
+        H: {horizontal: left, vertical: center}
+        I: {horizontal: left, vertical: center}
+        J: {horizontal: left, vertical: center}
+        K: {horizontal: left, vertical: center}
+        L: {horizontal: left, vertical: center}
+  tables:
+    settings:
+      sheet: "Settings"
+      start_row: 3
+      template_row: 3
+      clear_existing_rows: false
+      columns:
+        A: group_id
+        B: group_name
+        C: monitor_id
+        D: monitor_name
+        E: monitor_type
+        F: interval
+        G: enabled
+        H: warning_condition
+        I: critical_condition
+        J: owner
+        K: notification
+        L: comment
+  cells:
+    title:
+      sheet: "Settings"
+      cell: "A1"
+      value: "Converted {{ source_stem }}"
+  preserve: {}
+
+validation:
+  required_fields: ["group_id", "group_name", "monitor_id", "monitor_name"]
+  unique_fields: ["monitor_id"]
+  expected_sheets: ["Settings", "Reference"]
+
+security:
+  secret_patterns: ["password", "token", "secret"]
+  output_policy: mask

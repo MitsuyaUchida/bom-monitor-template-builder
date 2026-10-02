@@ -1,0 +1,182 @@
+profile:
+  id: trellix_endpoint_security107
+  name: Trellix Endpoint Security 10.7
+  version: 1
+
+detection:
+  filename_patterns:
+    - Trellix Endpoint Security 107
+    - Trellix Endpoint Security 10.7
+  group_name_patterns:
+    - Trellix Endpoint Security 10.7 監視
+  monitor_name_patterns:
+    - Trellix Agent Backwards Compatibility Service
+    - Trellix Agent Common Services
+    - Trellix Agent Service
+    - Trellix Endpoint Security Web Control Service
+    - McAfee Service Controller
+    - McAfee Validation Trust Protection Service
+    - McAfeeFramework
+    - mfewc
+  monitor_type_patterns:
+    - Service
+    - EventlogWSA
+  priority: 100
+
+template:
+  path:
+  generate_if_missing: true
+
+source:
+  header_search_rows: 10
+  sheets:
+    groups:
+      candidates: ["監視グループ一覧", "グループ一覧"]
+    monitors:
+      candidates: ["監視項目一覧", "監視一覧"]
+    details:
+      candidates: ["監視項目詳細", "監視詳細"]
+      required: false
+  fields:
+    group_id:
+      sections: ["groups"]
+      aliases: ["グループフォルダー", "グループID", "GroupId"]
+    group_name:
+      sections: ["groups", "monitors"]
+      aliases: ["グループ名", "グループ"]
+    enabled:
+      sections: ["groups", "monitors"]
+      aliases: ["有効", "有・無効", "Enabled"]
+    comment:
+      sections: ["groups", "monitors"]
+      aliases: ["コメント", "備考", "Comment"]
+    monitor_id:
+      sections: ["monitors"]
+      aliases: ["監視ファイル", "監視ID", "MonitorID"]
+    monitor_name:
+      sections: ["monitors"]
+      aliases: ["監視名", "名称", "MonitorName"]
+    monitor_type:
+      sections: ["monitors"]
+      aliases: ["監視タイプ", "タイプ", "Type"]
+    interval:
+      sections: ["monitors"]
+      aliases: ["監視間隔", "間隔", "Interval"]
+    warning_condition:
+      sections: ["monitors"]
+      aliases: ["注意判定", "注意しきい値", "Warning"]
+    critical_condition:
+      sections: ["monitors"]
+      aliases: ["危険判定", "危険しきい値", "Critical"]
+  keys:
+    monitor: ["group_id", "monitor_id"]
+
+transform:
+  replacements: {}
+  defaults:
+    remarks: null
+  derived_fields:
+    remarks: "サービス/ログソース: {{ ObjectName }}"
+  row_rules: []
+  normalizers:
+    monitor_id: ["strip_extension", "trim"]
+    enabled: ["normalize_boolean"]
+    interval: ["normalize_interval"]
+    warning_condition: ["normalize_spaces", "normalize_threshold"]
+    critical_condition: ["normalize_spaces", "normalize_threshold"]
+    Options: ["mask_secret"]
+  plugins: []
+
+output:
+  default_filename: trellix_endpoint_security107_design.xlsx
+  sheets: {}
+  generated_template:
+    enabled: true
+    columns:
+      - key: no
+        label: No.
+      - key: group_id
+        label: グループID
+      - key: group_name
+        label: グループ名
+      - key: monitor_id
+        label: 監視ID
+      - key: monitor_name
+        label: 監視名
+      - key: monitor_type
+        label: 監視種別
+      - key: enabled
+        label: 有効/無効
+      - key: interval
+        label: 監視間隔
+      - key: warning_condition
+        label: 注意条件
+      - key: critical_condition
+        label: 危険条件
+      - key: target
+        label: 監視対象
+      - key: remarks
+        label: 備考
+  monitor_table:
+    table: monitor_settings
+    clear_existing_data: true
+    trim_unused_rows: true
+    managed_columns:
+      group_id: A
+      group_name: B
+      monitor_id: C
+      monitor_name: D
+      monitor_type: E
+      interval: F
+      enabled: G
+      warning_condition: H
+      critical_condition: I
+      ObjectName: J
+      ValueName: K
+      comment: L
+      remarks: M
+  tables:
+    monitor_settings:
+      sheet: "監視設定"
+      start_row: 4
+      template_row: 4
+      clear_existing_rows: false
+      columns:
+        A: group_id
+        B: group_name
+        C: monitor_id
+        D: monitor_name
+        E: monitor_type
+        F: interval
+        G: enabled
+        H: warning_condition
+        I: critical_condition
+        J: ObjectName
+        K: ValueName
+        L: comment
+        M: remarks
+  cells: {}
+  preserve:
+    workbook_structure: true
+
+validation:
+  required_fields: ["group_id", "group_name", "monitor_id", "monitor_name", "monitor_type", "interval"]
+  unique_fields: ["monitor_id"]
+  expected_sheets: []
+
+security:
+  secret_patterns:
+    - user
+    - username
+    - password
+    - pass
+    - pswd
+    - secret
+    - token
+    - access-key
+    - secret-key
+    - client-secret
+    - credential
+    - ユーザー名
+    - パスワード
+  output_policy: mask

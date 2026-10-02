@@ -1,0 +1,189 @@
+profile:
+  id: aws_cost
+  name: AWS月コスト監視
+  version: 1
+
+detection:
+  filename_patterns:
+    - AWS
+    - aws_cost
+    - 月コスト
+  group_name_patterns:
+    - AWSコスト監視
+  monitor_name_patterns:
+    - AWS月コスト監視
+    - print_monthly_total_cost
+  monitor_type_patterns:
+    - Custom2
+  priority: 100
+
+template:
+  path: templates/AWSコスト監視設計書.xlsx
+
+source:
+  header_search_rows: 10
+  sheets:
+    groups:
+      candidates: ["監視グループ一覧", "グループ一覧"]
+    monitors:
+      candidates: ["監視項目一覧", "監視一覧"]
+    details:
+      candidates: ["監視項目詳細", "監視詳細"]
+      required: false
+  fields:
+    group_id:
+      sections: ["groups"]
+      aliases: ["グループフォルダー", "グループID", "GroupId"]
+    group_name:
+      sections: ["groups", "monitors"]
+      aliases: ["グループ名", "グループ"]
+    enabled:
+      sections: ["groups", "monitors"]
+      aliases: ["有効", "有・無効", "Enabled"]
+    comment:
+      sections: ["groups", "monitors"]
+      aliases: ["コメント", "備考", "Comment"]
+    monitor_id:
+      sections: ["monitors"]
+      aliases: ["監視ファイル", "監視ID", "MonitorID"]
+    monitor_name:
+      sections: ["monitors"]
+      aliases: ["監視名", "名称", "MonitorName"]
+    monitor_type:
+      sections: ["monitors"]
+      aliases: ["監視タイプ", "タイプ", "Type"]
+    interval:
+      sections: ["monitors"]
+      aliases: ["監視間隔", "間隔", "Interval"]
+    warning_condition:
+      sections: ["monitors"]
+      aliases: ["注意判定", "注意しきい値", "Warning"]
+    critical_condition:
+      sections: ["monitors"]
+      aliases: ["危険判定", "危険しきい値", "Critical"]
+  keys:
+    monitor: ["monitor_id"]
+
+transform:
+  replacements:
+    group_name:
+      AWSコスト監視: AWSコスト管理
+  defaults:
+    average_count: "-"
+    remarks: null
+    action_id: "act01"
+    action_name: "コスト超過通知メール送信"
+    comment_status: null
+    target_status: "注意、危険、失敗"
+    frequency: "毎回"
+    action_remarks: "メール内容は固定。\n\n監視項目 '$(MonitorName)' は $(Status) ステータス を検出しました。 \n\nAWSのコストが$(Value)ドルとなっています。ご注意ください。\n\n--------------------------------\nPowered by BOM.\n<$(ActionID).BOM@$(FullComputerName)>\nOn $(CurrentTime)"
+  derived_fields: {}
+  normalizers:
+    monitor_id: ["strip_extension", "trim"]
+    enabled: ["normalize_boolean"]
+    interval: ["normalize_interval"]
+    warning_condition: ["normalize_spaces", "normalize_threshold"]
+    critical_condition: ["normalize_spaces", "normalize_threshold"]
+    Options: ["mask_secret"]
+  plugins: []
+
+output:
+  default_filename: aws_cost_design.xlsx
+  sheets: {}
+  monitor_table:
+    table: monitor_settings
+    clear_existing_data: true
+    trim_unused_rows: true
+    managed_columns:
+      group_id: B
+      group_name: C
+      monitor_id: D
+      monitor_name: E
+      interval: F
+      enabled: G
+      average_count: H
+      warning_condition: I
+      critical_condition: J
+      comment: K
+      remarks: L
+      action_id: M
+      action_name: N
+      comment_status: O
+      target_status: P
+      frequency: Q
+      action_remarks: R
+    layout:
+      group_merge:
+        enabled: false
+        columns: [B, C]
+      style_sources:
+        single_row_group: 4
+        table_last: 4
+    group_labels:
+      first_row_only: true
+    format:
+      alignment:
+        B: {horizontal: center, vertical: top, wrap_text: true}
+        D: {horizontal: center, vertical: top}
+        M: {horizontal: center, vertical: top}
+        P: {horizontal: center, vertical: top}
+        Q: {horizontal: center, vertical: top}
+        R: {horizontal: left, vertical: top}
+  tables:
+    monitor_settings:
+      sheet: "監視設定"
+      start_row: 4
+      template_row: 4
+      clear_existing_rows: false
+      columns:
+        B: group_id
+        C: group_name
+        D: monitor_id
+        E: monitor_name
+        F: interval
+        G: enabled
+        H: average_count
+        I: warning_condition
+        J: critical_condition
+        K: comment
+        L: remarks
+        M: action_id
+        N: action_name
+        O: comment_status
+        P: target_status
+        Q: frequency
+        R: action_remarks
+  cells:
+    document_title:
+      sheet: "監視設定"
+      cell: "A1"
+      value: "0999_Windows その他：{{ source_stem }}"
+  preserve:
+    workbook_structure: true
+
+validation:
+  required_fields: ["group_id", "group_name", "monitor_id", "monitor_name", "interval"]
+  unique_fields: ["monitor_id"]
+  expected_sheets:
+    - "動作原理"
+    - "環境"
+    - "監視設定"
+    - "チェックシート"
+    - "AutoTemplate.ymlチェック"
+    - "サービス追加方法"
+
+security:
+  secret_patterns:
+    - password
+    - passwd
+    - secret
+    - secret_access_key
+    - access_key
+    - api_key
+    - token
+    - credential
+    - ユーザー名
+    - パスワード
+    - アクセスキー
+    - シークレットキー
+  output_policy: mask

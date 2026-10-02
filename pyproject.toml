@@ -17,6 +17,7 @@ dependencies = [
 
 [project.scripts]
 bom-monitor-builder = "bom_monitor_builder.cli:main"
+bom-cab-excel = "bom_monitor_builder.cab_excel.cli:cab_excel"
 
 [tool.setuptools.packages.find]
 where = ["src"]

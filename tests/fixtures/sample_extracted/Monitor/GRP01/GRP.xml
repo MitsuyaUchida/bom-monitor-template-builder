@@ -1,0 +1,16 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<MonitorGroup xmlns:SOAP-ENV="http://schemas.xmlsoap.org/soap/envelope/" xmlns:SOAP-ENC="http://schemas.xmlsoap.org/soap/encoding/" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:xsd="http://www.w3.org/2001/XMLSchema" xmlns:ns1="urn:mx-helper" xsi:type="ns1:MonitorGroup">
+  <ParentId xsi:type="xsd:string"></ParentId>
+  <Id xsi:type="xsd:string"></Id>
+  <Name xsi:type="xsd:string">ディスクパフォーマンス監視</Name>
+  <Comments xsi:type="xsd:string">ディスク遅延の状態を確認する</Comments>
+  <IconIndex xsi:type="xsd:int">3</IconIndex>
+  <Enabled xsi:type="xsd:boolean">true</Enabled>
+  <TTMon xsi:type="xsd:int">-1</TTMon>
+  <TTTue xsi:type="xsd:int">-1</TTTue>
+  <TTWed xsi:type="xsd:int">-1</TTWed>
+  <TTThu xsi:type="xsd:int">-1</TTThu>
+  <TTFri xsi:type="xsd:int">-1</TTFri>
+  <TTSat xsi:type="xsd:int">-1</TTSat>
+  <TTSun xsi:type="xsd:int">-1</TTSun>
+</MonitorGroup>

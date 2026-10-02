@@ -5,6 +5,9 @@ from typing import Any
 import click
 
 from bom_monitor_builder.analyzers.relevance import calculate_relevance
+from bom_monitor_builder.build.cli import build_command, build_with_codex_command
+from bom_monitor_builder.cab_excel.cli import cab_excel
+from bom_monitor_builder.design_excel.cli import design_excel
 from bom_monitor_builder.generators.template import write_candidate_report
 from bom_monitor_builder.knowledge.logging import configure_logging
 from bom_monitor_builder.knowledge.service import import_source, inspect_source, summarize_for_click
@@ -60,6 +63,10 @@ def knowledge() -> None:
 
 
 main.add_command(template)
+main.add_command(cab_excel)
+main.add_command(design_excel)
+main.add_command(build_command)
+main.add_command(build_with_codex_command)
 
 
 @knowledge.command("inspect")

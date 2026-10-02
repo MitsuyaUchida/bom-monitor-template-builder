@@ -1,45 +1,38 @@
+# Python environments, caches, and build artifacts
 .venv/
 __pycache__/
 *.py[cod]
+*.egg-info/
 .pytest_cache/
+.pytest-tmp/
 .mypy_cache/
 .ruff_cache/
-.env
-logs/*
-!logs/.gitkeep
-output/discovery/*
-!output/discovery/.gitkeep
-output/reports/*
-!output/reports/.gitkeep
-output/templates/*
-!output/templates/.gitkeep
-*.xlsx
-*.csv
-*.log
-# --------------------------------------------------
-# BOM TemplateData (実データ)
-# --------------------------------------------------
-import/TemplateData/
+.coverage
+.coverage.*
+htmlcov/
 
-# --------------------------------------------------
-# Generated knowledge
-# --------------------------------------------------
+# Local configuration and generated data
+.env
 knowledge/
-
-# --------------------------------------------------
-# Environment
-# --------------------------------------------------
-.env
-# Emacs
-*~
-\#*\#
-# Generated output
-output/
-# Logs
-logs/
-# BOM template source
+input/*.xlsx
 import/TemplateData/
 import/TemplateData.zip
 import/*.zip
-# Build artifacts
-*.egg-info/
+
+# Generated output
+output/
+
+# Runtime logs
+logs/
+
+# Independent subproject
+bom-service-builder/
+
+# Editor and temporary files
+*~
+\#*\#
+*.tmp
+*.temp
+*.swp
+*.bak
+*.part

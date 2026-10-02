@@ -1,0 +1,158 @@
+profile:
+  id: hyperv_apexone
+  name: Hyper-V and Apex One
+  version: 1
+
+detection:
+  filename_patterns:
+    - ApexOne
+    - Apex One
+  group_name_patterns:
+    - Trend Micro Apex One
+    - Trend Micro Apex One サーバー監視
+    - Trend Micro Apex One エージェント監視
+  monitor_name_patterns:
+    - Apex One
+    - Trend Micro Apex One
+    - Apex One Master Service
+    - Apex Oneサーバログ監視
+    - Trend Micro Unauthorized Change Prevention Service
+  priority: 80
+
+template:
+  path: templates/Hyper-V_ApexOne監視設計書.xlsx
+
+source:
+  header_search_rows: 10
+  sheets:
+    groups:
+      candidates: ["監視グループ一覧", "グループ一覧"]
+    monitors:
+      candidates: ["監視項目一覧", "監視一覧"]
+    details:
+      candidates: ["監視項目詳細", "監視詳細"]
+      required: false
+  fields:
+    group_id:
+      sections: ["groups"]
+      aliases: ["グループフォルダー", "グループID", "GroupId"]
+    group_name:
+      sections: ["groups", "monitors"]
+      aliases: ["グループ名", "グループ"]
+    enabled:
+      sections: ["groups", "monitors"]
+      aliases: ["有効", "有・無効", "Enabled"]
+    comment:
+      sections: ["groups", "monitors"]
+      aliases: ["コメント", "備考", "Comment"]
+    monitor_id:
+      sections: ["monitors"]
+      aliases: ["監視ファイル", "監視ID", "MonitorID"]
+    monitor_name:
+      sections: ["monitors"]
+      aliases: ["監視名", "名称", "MonitorName"]
+    monitor_type:
+      sections: ["monitors"]
+      aliases: ["監視タイプ", "タイプ", "Type"]
+    interval:
+      sections: ["monitors"]
+      aliases: ["監視間隔", "間隔", "Interval"]
+    warning_condition:
+      sections: ["monitors"]
+      aliases: ["注意判定", "注意しきい値", "Warning"]
+    critical_condition:
+      sections: ["monitors"]
+      aliases: ["危険判定", "危険しきい値", "Critical"]
+  keys:
+    monitor: ["monitor_id"]
+
+transform:
+  replacements: {}
+  defaults:
+    remarks: null
+    action_setting: null
+    notification_setting: null
+  derived_fields: {}
+  normalizers:
+    monitor_id: ["strip_extension", "trim"]
+    enabled: ["normalize_boolean"]
+    interval: ["normalize_interval"]
+    warning_condition: ["normalize_spaces", "normalize_threshold"]
+    critical_condition: ["normalize_spaces", "normalize_threshold"]
+    Options: ["mask_secret"]
+  plugins: []
+
+output:
+  default_filename: Hyper-V_ApexOne監視設計書.xlsx
+  sheets: {}
+  monitor_table:
+    table: monitor_settings
+    clear_existing_data: true
+    trim_unused_rows: true
+    managed_columns:
+      group_id: A
+      group_name: B
+      monitor_id: C
+      monitor_name: D
+      monitor_type: E
+      interval: F
+      enabled: G
+      warning_condition: H
+      critical_condition: I
+      ObjectName: J
+      ValueName: K
+      Options: L
+      comment: M
+      remarks: N
+      action_setting: O
+      notification_setting: P
+    layout:
+      group_merge:
+        enabled: false
+        columns: [A, B]
+  tables:
+    monitor_settings:
+      sheet: "監視設定"
+      start_row: 4
+      template_row: 4
+      clear_existing_rows: false
+      columns:
+        A: group_id
+        B: group_name
+        C: monitor_id
+        D: monitor_name
+        E: monitor_type
+        F: interval
+        G: enabled
+        H: warning_condition
+        I: critical_condition
+        J: ObjectName
+        K: ValueName
+        L: Options
+        M: comment
+        N: remarks
+        O: action_setting
+        P: notification_setting
+  cells:
+    document_title:
+      sheet: "監視設定"
+      cell: "A1"
+      value: "{{ source_stem }}"
+  preserve:
+    workbook_structure: true
+
+validation:
+  required_fields: ["group_id", "group_name", "monitor_id", "monitor_name", "monitor_type", "interval"]
+  unique_fields: ["monitor_id"]
+  expected_sheets: []
+
+security:
+  secret_patterns:
+    - password
+    - passwd
+    - secret
+    - token
+    - credential
+    - ユーザー名
+    - パスワード
+  output_policy: mask
