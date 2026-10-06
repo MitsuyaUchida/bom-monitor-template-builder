@@ -54,6 +54,7 @@ class BuildResult:
     template_source: str
     group_count: int
     monitor_count: int
+    action_count: int
     validation_checks: list[str]
     input_unchanged: bool
     template_unchanged: bool | None

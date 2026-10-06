@@ -201,5 +201,6 @@ def render_build_result_lines(result: object) -> list[str]:
         f"{'Planned output' if result.planned_output else 'Output'}: {result.output_path}",
         f"Groups: {result.group_count}",
         f"Monitors: {result.monitor_count}",
+        f"Actions: {result.action_count}",
         f"Validation: {'PASS' if result.validation_checks else 'SKIPPED'}",
     ]

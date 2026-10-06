@@ -21,6 +21,9 @@ import/*.zip
 
 # Generated output
 output/
+build/
+build-gui/
+dist/
 
 # Runtime logs
 logs/

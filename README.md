@@ -88,6 +88,49 @@ source .venv/bin/activate
 - `bom-monitor-builder`
 - `bom-cab-excel`
 
+## Windows EXE版
+
+Windows 用の CLI EXE は PyInstaller の `--onefile` 形式で作成します。ビルド前に `.venv` を用意し、開発依存関係をインストールしてください。
+
+配布用のGUI版・CLI版EXEは、GitHubの [Releases](https://github.com/MitsuyaUchida/bom-monitor-template-builder/releases) から `bom-monitor-builder-gui.exe` または `bom-monitor-builder.exe` をダウンロードしてください。配布先Windows PCへのPythonインストールは不要です。
+
+CLI版の実行例（ReleaseからダウンロードしたEXEをCABと同じフォルダーに置いた場合）:
+
+```powershell
+.\bom-monitor-builder.exe build `
+  --input ".\Hyper-V.CAB" `
+  --output ".\Hyper-V.xlsx" `
+  --overwrite
+```
+
+```powershell
+.\.venv\Scripts\Activate.ps1
+python -m pip install -r requirements-dev.txt
+.\build_exe.ps1
+```
+
+生成先は `dist\bom-monitor-builder.exe` です。実行例:
+
+```powershell
+.\dist\bom-monitor-builder.exe build `
+  --input ".\input.CAB" `
+  --output ".\output.xlsx"
+```
+
+配布先 PC には Python のインストールは不要です。profiles、YAML、設定ファイル、テンプレート Excel は EXE に同梱されます。入力 CAB と出力先は実行時に指定してください。
+
+### GUI版
+
+GUI版はCLI版とは別のEXEとしてビルドします。次を実行すると `dist\bom-monitor-builder-gui.exe` が作成されます。CLI版EXEは削除・上書きされません。
+
+```powershell
+.\build_gui_exe.ps1
+```
+
+`bom-monitor-builder-gui.exe` をダブルクリックし、CABファイルを選択して出力先を確認後、「変換開始」を押してください。CAB選択時に出力先が未指定なら、CABと同じフォルダー・ベース名の `.xlsx` を設定します。既存ファイル上書きは初期状態で有効、中間ファイルの保持は無効です。変換結果と `Validation: PASS` は実行ログに表示されます。
+
+「終了」ボタンまたはウィンドウ右上の閉じる操作でGUIを終了できます。
+
 ## 最も簡単な使い方
 
 正式仕様の入力形式は `build --input <CAB>` です。
@@ -235,6 +278,44 @@ build 失敗時の調査補助として `build-with-codex` も利用できます
 
 詳細は [profile_specification.md](docs/profile_specification.md) を参照してください。
 
+## 表示変換仕様
+
+内部値は保持し、Excel 設計書へ出力する段階で表示名称へ変換します。CAB/XML、parser、model の値や profile 判定・validation 用データは書き換えません。
+
+### サービス監視の CurrentState
+
+`Monitor Type=Service` かつ `ValueName=CurrentState` の場合に限り、状態値を次の日本語表示へ変換します。
+
+| 内部値 | Excel表示 |
+|---:|---|
+| 1 | 停止 |
+| 2 | 開始中 |
+| 3 | 停止中 |
+| 4 | 開始 |
+| 5 | 再開中 |
+| 6 | 一時停止中 |
+| 7 | 一時停止 |
+
+条件に一致しない監視の数値や、未知の状態値は元の値のまま表示します。
+
+### ContYellow 条件
+
+`数字ContYellow` と `数字 ContYellow` は、Excel 表示時に `数字回連続注意` へ変換します。数字部分は固定値ではありません。
+
+| 内部値 | Excel表示 |
+|---|---|
+| `2ContYellow` | `2回連続注意` |
+| `3ContYellow` | `3回連続注意` |
+| `5 ContYellow` | `5回連続注意` |
+
+未知の条件値は変換せず、そのまま表示します。
+
+### 確認結果
+
+SQL Server 2025 CAB と `standard.cab` から生成した Excel、および Excel 保存後にセル値を読み直す統合テストで表示を確認済みです。SQL Server 2025 の出力では `5ContYellow` が `5回連続注意` となり、`standard.cab` の出力では `2回連続注意` と `3回連続注意` を確認しました。サービス状態の `開始` / `停止` も保存後セル値のテストで確認しています。
+
+最終テスト結果: `131 passed / 0 failed`。
+
 ## 新しい監視種別の追加方針
 
 最重要ルール:
@@ -288,3 +369,13 @@ build 失敗時の調査補助として `build-with-codex` も利用できます
 ./scripts/run.sh knowledge import --source import/TemplateData --output knowledge --dry-run
 ./scripts/run.sh knowledge import --source import/TemplateData --output knowledge
 ```
+
+## Profile selection
+
+Build selects a profile in this order:
+
+1. An explicitly supplied `--profile`
+2. Automatic profile detection
+3. Generic fallback
+
+When no existing profile matches a CAB, the build continues with the generic standard layout and validates the generated workbook. The generic path keeps monitor settings and ActionItem XML settings profile independent. Action settings are written to a separate `Actions` worksheet when present; a CAB with no actions builds normally.

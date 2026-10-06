@@ -76,6 +76,11 @@ class MonitorItem(XmlRecord):
 
 
 @dataclass(slots=True)
+class ActionItem(XmlRecord):
+    """Action XML record associated with a monitor."""
+
+
+@dataclass(slots=True)
 class OptionsInfo:
     """Extracted fields from Options."""
 
@@ -106,6 +111,7 @@ class ParsedCab:
     recognized_monitor_types: list[str]
     unknown_comparison_values: list[str]
     unknown_interval_units: list[str]
+    actions: list[ActionItem] = field(default_factory=list)
 
 
 @dataclass(slots=True)

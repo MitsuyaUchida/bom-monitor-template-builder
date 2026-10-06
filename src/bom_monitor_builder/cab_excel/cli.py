@@ -17,7 +17,7 @@ from .extractor import ExtractionSession, prepare_input, sha256_for_path
 from .formatter import format_interval, format_threshold
 from .manifest import parse_manifest_bytes
 from .models import ParsedCab, ParseWarning
-from .xml_parser import parse_extracted_monitor_tree
+from .xml_parser import parse_extracted_action_tree, parse_extracted_monitor_tree
 
 LOGGER = logging.getLogger(__name__)
 
@@ -51,6 +51,7 @@ def parse_input_to_model(
         manifest, manifest_warnings = parse_manifest_bytes(manifest_path.read_bytes())
         warnings.extend(manifest_warnings)
         groups, items, xml_warnings = parse_extracted_monitor_tree(session.extracted_root)
+        actions = parse_extracted_action_tree(session.extracted_root)
         warnings.extend(xml_warnings)
         recognized_monitor_types = sorted(
             {item.raw_values.get("Type", "") for item in items if item.raw_values.get("Type", "")}
@@ -87,6 +88,7 @@ def parse_input_to_model(
             recognized_monitor_types=recognized_monitor_types,
             unknown_comparison_values=sorted(unknown_comparison_values),
             unknown_interval_units=sorted(unknown_interval_units),
+            actions=actions,
         )
         return parsed, session
     except Exception:

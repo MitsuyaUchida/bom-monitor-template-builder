@@ -4,6 +4,7 @@ from pathlib import Path
 from typing import Any
 
 from bom_monitor_builder.design_excel.profile_loader import read_profile_data
+from bom_monitor_builder.utils.resources import resource_path
 
 from .exceptions import ProfileDetectionError
 from .models import DetectionCandidate, DetectionCandidateAnalysis, DetectionInput
@@ -12,7 +13,7 @@ from .models import DetectionCandidate, DetectionCandidateAnalysis, DetectionInp
 def detect_profile(
     detection_input: DetectionInput,
     *,
-    profiles_dir: Path = Path("profiles"),
+    profiles_dir: Path | None = None,
 ) -> DetectionCandidate:
     candidates = rank_profiles(detection_input, profiles_dir=profiles_dir)
     if not candidates or candidates[0].score <= 0:
@@ -36,10 +37,11 @@ def detect_profile(
 def rank_profiles(
     detection_input: DetectionInput,
     *,
-    profiles_dir: Path = Path("profiles"),
+    profiles_dir: Path | None = None,
 ) -> list[DetectionCandidate]:
+    resolved_profiles_dir = resource_path(profiles_dir or Path("profiles"))
     candidates: list[DetectionCandidate] = []
-    for profile_path in sorted(profiles_dir.glob("*.yml")):
+    for profile_path in sorted(resolved_profiles_dir.glob("*.yml")):
         profile_data = read_profile_data(profile_path)
         profile_section = profile_data.get("profile", {})
         profile_id = str(profile_section.get("id", profile_path.stem))
@@ -62,10 +64,11 @@ def rank_profiles(
 def analyze_profiles(
     detection_input: DetectionInput,
     *,
-    profiles_dir: Path = Path("profiles"),
+    profiles_dir: Path | None = None,
 ) -> list[DetectionCandidateAnalysis]:
+    resolved_profiles_dir = resource_path(profiles_dir or Path("profiles"))
     analyses: list[DetectionCandidateAnalysis] = []
-    for profile_path in sorted(profiles_dir.glob("*.yml")):
+    for profile_path in sorted(resolved_profiles_dir.glob("*.yml")):
         profile_data = read_profile_data(profile_path)
         profile_section = profile_data.get("profile", {})
         profile_id = str(profile_section.get("id", profile_path.stem))

@@ -6,7 +6,7 @@ from decimal import Decimal, InvalidOperation
 from pathlib import Path
 from xml.etree import ElementTree
 
-from .models import MonitorGroup, MonitorItem, ParseWarning, ScalarValue, XmlRecord
+from .models import ActionItem, MonitorGroup, MonitorItem, ParseWarning, ScalarValue, XmlRecord
 
 
 def local_name(tag: str) -> str:
@@ -85,6 +85,15 @@ def parse_xml_bytes(
             typed_values=typed_values,
             root_tag=root.tag,
         )
+    elif root_name == "ActionItem":
+        record = ActionItem(
+            kind=root_name,
+            group_folder=group_folder,
+            xml_file=xml_file,
+            raw_values=raw_values,
+            typed_values=typed_values,
+            root_tag=root.tag,
+        )
     else:
         raise ValueError(f"Unsupported XML root {root_name} in {xml_file}")
     return record, warnings
@@ -120,3 +129,21 @@ def parse_extracted_monitor_tree(root: Path) -> tuple[list[MonitorGroup], list[M
             elif isinstance(record, MonitorItem):
                 items.append(record)
     return groups, items, warnings
+
+
+def parse_extracted_action_tree(root: Path) -> list[ActionItem]:
+    """Parse ActionItem XML independently from monitor profile detection."""
+    monitor_root = root / "Monitor"
+    actions: list[ActionItem] = []
+    if not monitor_root.exists():
+        return actions
+    for group_dir in sorted(path for path in monitor_root.iterdir() if path.is_dir()):
+        for xml_path in sorted(group_dir.glob("*ACT*.xml")):
+            record, _ = parse_xml_bytes(
+                xml_path.read_bytes(),
+                group_folder=group_dir.name,
+                xml_file=xml_path.relative_to(root).as_posix(),
+            )
+            if isinstance(record, ActionItem):
+                actions.append(record)
+    return actions

@@ -10,6 +10,7 @@ from bom_monitor_builder.cab_excel.excel_writer import save_workbook
 from bom_monitor_builder.design_excel.profile_loader import load_profile, read_profile_data
 from bom_monitor_builder.design_excel.service import run_conversion
 from bom_monitor_builder.design_excel.template_generator import profile_allows_generated_template
+from bom_monitor_builder.utils.resources import resource_path
 
 from .detector import detect_profile
 from .exceptions import BuildError, ProfileDetectionError
@@ -125,6 +126,7 @@ def run_build(
         template_source=str(result["template_source"]),
         group_count=int(result["group_count"]),
         monitor_count=int(result["monitor_count"]),
+        action_count=int(result.get("action_count", 0)),
         validation_checks=list(result["validation_checks"]),
         input_unchanged=bool(result["input_unchanged"]),
         template_unchanged=result["template_unchanged"],
@@ -175,7 +177,15 @@ def resolve_profile_path(
         profile_data = read_profile_data(profile_path)
         profile_id = str(profile_data.get("profile", {}).get("id", profile_path.stem))
         return profile_path, "explicit", [f"profile:{profile_id}"]
-    candidate = detect_profile(detection_input)
+    try:
+        candidate = detect_profile(detection_input)
+    except ProfileDetectionError as exc:
+        reason = "ambiguous" if "ambiguous" in str(exc).casefold() else "no-match"
+        return (
+            resource_path("profiles/generic.yml"),
+            "generic-fallback",
+            [f"automatic-detection:{reason}; using generic fallback"],
+        )
     return candidate.profile_path, "auto", candidate.reasons
 
 
@@ -184,7 +194,11 @@ def resolve_profile_reference(profile_value: str) -> Path:
     if candidate.exists():
         return candidate
     if candidate.suffix not in {".yml", ".yaml"}:
-        by_id = Path("profiles") / f"{profile_value}.yml"
+        by_id = resource_path(Path("profiles") / f"{profile_value}.yml")
         if by_id.exists():
             return by_id
+    else:
+        bundled_candidate = resource_path(candidate)
+        if bundled_candidate.exists():
+            return bundled_candidate
     raise BuildError(f"Profile not found: {profile_value}")

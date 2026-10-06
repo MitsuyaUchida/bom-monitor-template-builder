@@ -35,11 +35,26 @@ def build_workbook(parsed: ParsedCab, *, tool_version: str) -> Workbook:
 
     write_groups_sheet(workbook.create_sheet("監視グループ一覧"), parsed.groups)
     write_items_sheet(workbook.create_sheet("監視項目一覧"), parsed)
+    if parsed.actions:
+        write_actions_sheet(workbook.create_sheet("Actions"), parsed)
     write_item_details_sheet(workbook.create_sheet("監視項目詳細"), parsed)
     write_xml_sheet(workbook.create_sheet("XML全項目"), parsed)
     write_analysis_sheet(workbook.create_sheet("解析情報"), parsed)
     return workbook
 
+
+
+def write_actions_sheet(sheet: Worksheet, parsed: ParsedCab) -> None:
+    """Write action XML values separately from monitor rows."""
+    keys = sorted({key for action in parsed.actions for key in action.raw_values})
+    headers = ["Group folder", "Action XML", "Monitor XML", *keys]
+    write_header(sheet, headers)
+    for row_index, action in enumerate(parsed.actions, start=2):
+        monitor_xml = Path(action.xml_file).name.split("ACT", 1)[0] + ".xml"
+        values = [action.group_folder, action.xml_file, monitor_xml, *[action.raw_values.get(key, "") for key in keys]]
+        for column, value in enumerate(values, start=1):
+            sheet.cell(row_index, column, sanitize_excel_text(value))
+    finalize_sheet(sheet, freeze="A2", landscape=True, repeat_rows="1:1")
 
 def write_cover_sheet(sheet: Worksheet, parsed: ParsedCab, *, tool_version: str) -> None:
     """Write the cover sheet."""

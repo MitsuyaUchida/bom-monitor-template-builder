@@ -26,6 +26,15 @@ def parse_workbook(input_path: Path, profile: dict[str, Any]) -> WorkbookModel:
     detail_map: dict[str, dict[str, Any]] = {}
     if detail_sheet_name:
         detail_map = parse_detail_sheet(workbook[detail_sheet_name])
+    actions: list[dict[str, Any]] = []
+    if "Actions" in workbook.sheetnames:
+        action_sheet = workbook["Actions"]
+        headers = [str(cell.value or "") for cell in action_sheet[1]]
+        actions = [
+            {header: action_sheet.cell(row_idx, column_idx).value for column_idx, header in enumerate(headers, start=1) if header}
+            for row_idx in range(2, action_sheet.max_row + 1)
+            if any(action_sheet.cell(row_idx, column_idx).value is not None for column_idx in range(1, action_sheet.max_column + 1))
+        ]
     profile_id = (
         profile.get("profile", {}).get("id")
         if isinstance(profile.get("profile"), dict)
@@ -50,6 +59,7 @@ def parse_workbook(input_path: Path, profile: dict[str, Any]) -> WorkbookModel:
                 "details": detail_map,
             }
         },
+        raw_sections={"actions": actions},
     )
 
 

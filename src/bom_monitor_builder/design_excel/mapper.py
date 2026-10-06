@@ -6,7 +6,7 @@ from pathlib import Path
 from typing import Any
 
 from .exceptions import MappingError
-from .condition_display import get_condition_display_name
+from .condition_display import get_condition_display_name, get_service_state_display_name
 from .models import RenderPlan, RenderRow, RenderTable, WorkbookModel
 from .monitor_type_display import get_monitor_type_display_name
 from .normalizers import NORMALIZERS
@@ -89,6 +89,21 @@ def build_output_row(item: Any, model: WorkbookModel, profile: dict[str, Any]) -
         row.setdefault(key, value)
     for field_name, mapping in replacements.items():
         current = row.get(field_name)
+        # ContYellow is handled by the shared display rule below; profile-specific
+        # prose replacements would otherwise consume the internal identifier first.
+        if (
+            field_name in {"warning_condition", "critical_condition"}
+            and isinstance(current, str)
+            and "ContYellow" in current
+        ):
+            continue
+        if (
+            field_name in {"warning_condition", "critical_condition"}
+            and row.get("monitor_type") == "Service"
+            and row.get("ValueName") == "CurrentState"
+            and str(current) in {"1", "2", "3", "4", "5", "6", "7"}
+        ):
+            continue
         if current in mapping:
             row[field_name] = mapping[current]
     for field_name, functions in normalizers.items():
@@ -103,6 +118,17 @@ def build_output_row(item: Any, model: WorkbookModel, profile: dict[str, Any]) -
     for key, expression in derived.items():
         row[key] = render_template_value(expression, model, profile, row)
     apply_row_rules(row, model, profile)
+    # This row is the Excel render representation; the WorkbookModel remains untouched.
+    value_name = row.get("ValueName")
+    for field_name in ("warning_condition", "critical_condition"):
+        value = row.get(field_name)
+        if isinstance(value, str):
+            value = get_condition_display_name(value)
+        row[field_name] = get_service_state_display_name(
+            value,
+            monitor_type=row.get("monitor_type"),
+            value_name=value_name,
+        )
     secret_patterns = profile.get("security", {}).get("secret_patterns", DEFAULT_SECRET_PATTERNS)
     return mask_secrets_in_mapping(row, list(secret_patterns))
 
@@ -115,6 +141,11 @@ def build_table_row(values: dict[str, Any], columns: dict[str, str]) -> dict[str
             value = get_monitor_type_display_name(value)
         elif field_name in {"warning_condition", "critical_condition"}:
             value = get_condition_display_name(value)
+            value = get_service_state_display_name(
+                value,
+                monitor_type=values.get("monitor_type"),
+                value_name=values.get("ValueName"),
+            )
         row[column] = value
     return row
 

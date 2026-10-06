@@ -1,0 +1,149 @@
+profile:
+  id: generic
+  name: Generic BOM Monitor
+  version: 1
+template:
+  path: null
+  generate_if_missing: true
+source:
+  header_search_rows: 10
+  sheets:
+    groups:
+      candidates:
+      - 監視グループ一覧
+      - グループ一覧
+    monitors:
+      candidates:
+      - 監視項目一覧
+      - 監視一覧
+    details:
+      candidates:
+      - 監視項目詳細
+      - 監視詳細
+      required: false
+  fields:
+    group_id:
+      sections:
+      - groups
+      aliases:
+      - グループフォルダー
+      - グループID
+      - GroupId
+    group_name:
+      sections:
+      - groups
+      - monitors
+      aliases:
+      - グループ名
+      - グループ
+    enabled:
+      sections:
+      - groups
+      - monitors
+      aliases:
+      - 有効
+      - 有・無効
+      - Enabled
+    comment:
+      sections:
+      - groups
+      - monitors
+      aliases:
+      - コメント
+      - 備考
+      - Comment
+    monitor_id:
+      sections:
+      - monitors
+      aliases:
+      - 監視ファイル
+      - 監視ID
+      - MonitorID
+    monitor_name:
+      sections:
+      - monitors
+      aliases:
+      - 監視名
+      - 名称
+      - MonitorName
+    monitor_type:
+      sections:
+      - monitors
+      aliases:
+      - 監視タイプ
+      - タイプ
+      - Type
+    interval:
+      sections:
+      - monitors
+      aliases:
+      - 監視間隔
+      - 間隔
+      - Interval
+    warning_condition:
+      sections:
+      - monitors
+      aliases:
+      - 注意判定
+      - 注意しきい値
+      - Warning
+    critical_condition:
+      sections:
+      - monitors
+      aliases:
+      - 危険判定
+      - 危険しきい値
+      - Critical
+  keys:
+    monitor:
+    - group_id
+    - monitor_id
+transform:
+  replacements: {}
+  defaults: {}
+  derived_fields: {}
+  row_rules: []
+  normalizers:
+    enabled:
+    - normalize_boolean
+    interval:
+    - normalize_interval
+    warning_condition:
+    - normalize_spaces
+    - normalize_threshold
+    critical_condition:
+    - normalize_spaces
+    - normalize_threshold
+    Options:
+    - mask_secret
+  plugins: []
+output:
+  generated_template:
+    enabled: true
+validation:
+  required_fields:
+  - group_id
+  - group_name
+  - monitor_id
+  - monitor_name
+  - monitor_type
+  - interval
+  unique_fields:
+  - monitor_id
+  expected_sheets: []
+security:
+  secret_patterns:
+  - user
+  - username
+  - password
+  - pass
+  - pswd
+  - secret
+  - token
+  - access-key
+  - secret-key
+  - client-secret
+  - credential
+  - ユーザー名
+  - パスワード
+  output_policy: mask

@@ -111,6 +111,46 @@ def create_generated_template_workbook(
     populate_environment_sheet(environment, model, profile)
     populate_monitor_settings_template(settings, columns, profile)
     populate_check_sheet(check_sheet)
+    if profile.get("profile", {}).get("id") == "generic":
+        monitor_xml_sheet = workbook.create_sheet("Monitor XML")
+        xml_headers = ["Group", "Monitor", "Setting", "Value"]
+        for column, header in enumerate(xml_headers, start=1):
+            cell = monitor_xml_sheet.cell(1, column, header)
+            apply_cell_style(cell, monitor_setting_header_style())
+        xml_row = 2
+        for item in model.items:
+            for key, value in item.raw_values.items():
+                for column, raw_value in enumerate((item.group_name or "", item.monitor_name, key, value), start=1):
+                    cell = monitor_xml_sheet.cell(xml_row, column, "" if raw_value is None else str(raw_value))
+                    apply_cell_style(
+                        cell,
+                        monitor_setting_data_style(horizontal="left", vertical="center", wrap_text=True),
+                    )
+                xml_row += 1
+        for column, width in {"A": 26, "B": 36, "C": 24, "D": 60}.items():
+            monitor_xml_sheet.column_dimensions[column].width = width
+        apply_standard_sheet_view(monitor_xml_sheet, freeze_panes="A2", show_grid_lines=False)
+        apply_standard_print_settings(monitor_xml_sheet, orientation="landscape", title_rows="1:1")
+        apply_auto_filter(monitor_xml_sheet, f"A1:D{max(1, xml_row - 1)}")
+    actions = model.raw_sections.get("actions", [])
+    if actions:
+        action_sheet = workbook.create_sheet("Actions")
+        action_headers = list(dict.fromkeys(key for action in actions for key in action))
+        for column, header in enumerate(action_headers, start=1):
+            cell = action_sheet.cell(1, column, header)
+            apply_cell_style(cell, monitor_setting_header_style())
+            action_sheet.column_dimensions[excel_column_name(column)].width = 24
+        for row_index, action in enumerate(actions, start=2):
+            for column, header in enumerate(action_headers, start=1):
+                value = action.get(header)
+                action_sheet.cell(row_index, column, "" if value is None else str(value))
+                apply_cell_style(
+                    action_sheet.cell(row_index, column),
+                    monitor_setting_data_style(horizontal="left", vertical="center", wrap_text=True),
+                )
+        apply_standard_sheet_view(action_sheet, freeze_panes="A2", show_grid_lines=False)
+        apply_standard_print_settings(action_sheet, orientation="landscape", title_rows="1:1")
+        apply_auto_filter(action_sheet, f"A1:{excel_column_name(len(action_headers))}{max(1, len(actions)+1)}")
 
     sanitize_workbook_strings(
         workbook,
